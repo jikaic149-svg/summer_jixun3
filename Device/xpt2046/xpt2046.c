@@ -7,6 +7,7 @@
 
 #define XPT2046_LANDSCAPE_X_COMMAND  0x90U
 #define XPT2046_LANDSCAPE_Y_COMMAND  0xD0U
+#define XPT2046_ADC_MAX_VALUE         0x0FFFU
 
 _Static_assert(TOUCH_MEDIAN_SAMPLE_COUNT == 5U,
                "the fixed median filter requires five samples");
@@ -23,17 +24,13 @@ static bool deadline_reached(uint32_t now, uint32_t deadline)
 static uint16_t read_channel(uint8_t command)
 {
     uint16_t value;
-    uint8_t high;
-    uint8_t low;
 
     bsp_xpt2046_select(true);
     (void)bsp_xpt2046_transfer(command);
-    high = bsp_xpt2046_transfer(0U);
-    low = bsp_xpt2046_transfer(0U);
+    value = bsp_xpt2046_receive_12bit();
     bsp_xpt2046_select(false);
 
-    value = (uint16_t)(((uint16_t)high << 8U) | low);
-    return (uint16_t)(value >> 3U);
+    return (uint16_t)(value & XPT2046_ADC_MAX_VALUE);
 }
 
 static void sort_u16(uint16_t *values, uint8_t count)
@@ -58,10 +55,11 @@ static bool read_filtered(uint16_t *raw_x, uint16_t *raw_y)
     uint16_t samples_y[TOUCH_MEDIAN_SAMPLE_COUNT];
     uint8_t index;
 
+    if (!bsp_xpt2046_pen_is_active()) {
+        return false;
+    }
+
     for (index = 0U; index < TOUCH_MEDIAN_SAMPLE_COUNT; ++index) {
-        if (!bsp_xpt2046_pen_is_active()) {
-            return false;
-        }
         samples_x[index] = read_channel(XPT2046_LANDSCAPE_X_COMMAND);
         samples_y[index] = read_channel(XPT2046_LANDSCAPE_Y_COMMAND);
     }
@@ -70,6 +68,11 @@ static bool read_filtered(uint16_t *raw_x, uint16_t *raw_y)
     sort_u16(samples_y, TOUCH_MEDIAN_SAMPLE_COUNT);
     *raw_x = samples_x[TOUCH_MEDIAN_SAMPLE_COUNT / 2U];
     *raw_y = samples_y[TOUCH_MEDIAN_SAMPLE_COUNT / 2U];
+
+    if ((*raw_x == 0U) || (*raw_x == XPT2046_ADC_MAX_VALUE) ||
+        (*raw_y == 0U) || (*raw_y == XPT2046_ADC_MAX_VALUE)) {
+        return false;
+    }
     return true;
 }
 
@@ -113,6 +116,12 @@ void xpt2046_init(xpt2046_t *touch,
     touch->press_count = 0U;
     touch->release_count = 0U;
     touch->next_sample_ms = now_ms;
+
+    /*
+     * A completed command with PD1:PD0 = 00 explicitly enables PENIRQ.
+     * Do not wait for PENIRQ before the controller has received that command.
+     */
+    (void)read_channel(XPT2046_LANDSCAPE_X_COMMAND);
 }
 
 bool xpt2046_poll(xpt2046_t *touch,

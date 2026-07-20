@@ -8,6 +8,9 @@
 #define TOUCH_MISO_PIN    3U
 #define TOUCH_PEN_PIN     4U
 
+#define TOUCH_SPI_HALF_PERIOD_LOOPS    60U
+#define TOUCH_CONVERSION_DELAY_LOOPS  300U
+
 static void gpio_output(GPIO_TypeDef *gpio, uint32_t pin)
 {
     gpio->MODER = (gpio->MODER & ~(3UL << (pin * 2U))) |
@@ -27,7 +30,21 @@ static void gpio_input_pullup(GPIO_TypeDef *gpio, uint32_t pin)
 static void spi_half_period(void)
 {
     uint32_t count;
-    for (count = 0U; count < 20U; ++count) {
+    for (count = 0U; count < TOUCH_SPI_HALF_PERIOD_LOOPS; ++count) {
+        __NOP();
+    }
+}
+
+static void conversion_delay(void)
+{
+    uint32_t count;
+
+    /*
+     * The touch interface is started only after SYSCLK reaches 168 MHz.
+     * In the Release image this loop takes at least 5 us.  It deliberately
+     * follows the vendor's known-good XPT2046 BUSY/dummy-clock timing.
+     */
+    for (count = 0U; count < TOUCH_CONVERSION_DELAY_LOOPS; ++count) {
         __NOP();
     }
 }
@@ -86,4 +103,32 @@ uint8_t bsp_xpt2046_transfer(uint8_t output)
     }
 
     return input;
+}
+
+uint16_t bsp_xpt2046_receive_12bit(void)
+{
+    uint16_t input = 0U;
+    uint8_t bit;
+
+    /* Complete the command's final low half-cycle before the BUSY clock. */
+    spi_half_period();
+
+    /* Discard the BUSY/null bit and allow the conversion to settle. */
+    GPIOE->BSRR = 1UL << TOUCH_SCK_PIN;
+    conversion_delay();
+    GPIOE->BSRR = 1UL << (TOUCH_SCK_PIN + 16U);
+    conversion_delay();
+
+    for (bit = 0U; bit < 12U; ++bit) {
+        input = (uint16_t)(input << 1U);
+        GPIOE->BSRR = 1UL << TOUCH_SCK_PIN;
+        spi_half_period();
+        if ((GPIOE->IDR & (1UL << TOUCH_MISO_PIN)) != 0U) {
+            input |= 1U;
+        }
+        GPIOE->BSRR = 1UL << (TOUCH_SCK_PIN + 16U);
+        spi_half_period();
+    }
+
+    return (uint16_t)(input & 0x0FFFU);
 }

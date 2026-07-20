@@ -53,6 +53,23 @@ class LcdUiStaticTest(unittest.TestCase):
         ):
             self.assertIn(define, touch_bus)
 
+    def test_touch_adc_uses_explicit_12_bit_busy_timing(self) -> None:
+        touch_bus = (ROOT / "bsp/bsp_xpt2046_io.c").read_text("utf-8")
+        touch_device = (ROOT / "Device/xpt2046/xpt2046.c").read_text("utf-8")
+
+        self.assertIn("bsp_xpt2046_receive_12bit", touch_bus)
+        self.assertIn("TOUCH_SPI_HALF_PERIOD_LOOPS    60U", touch_bus)
+        self.assertIn("TOUCH_CONVERSION_DELAY_LOOPS", touch_bus)
+        self.assertIn("input & 0x0FFFU", touch_bus)
+        self.assertNotRegex(touch_device, r"value\s*>>\s*3U")
+        self.assertIn("XPT2046_ADC_MAX_VALUE", touch_device)
+        self.assertIn("*raw_x == 0U", touch_device)
+        self.assertIn("*raw_y == XPT2046_ADC_MAX_VALUE", touch_device)
+        self.assertIn(
+            "(void)read_channel(XPT2046_LANDSCAPE_X_COMMAND);",
+            touch_device,
+        )
+
     def test_ui_strings_have_compiled_glyphs(self) -> None:
         ui_source = (ROOT / "Application/ui/target_ui.c").read_text("utf-8")
         font_source = (ROOT / "Application/ui/ui_font.c").read_text("utf-8")

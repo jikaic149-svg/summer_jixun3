@@ -8,5 +8,6 @@ void bsp_xpt2046_io_init(void);
 bool bsp_xpt2046_pen_is_active(void);
 void bsp_xpt2046_select(bool selected);
 uint8_t bsp_xpt2046_transfer(uint8_t output);
+uint16_t bsp_xpt2046_receive_12bit(void);
 
 #endif
