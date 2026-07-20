@@ -25,6 +25,15 @@
 - 已知限制：尚未连接实物。ILI9341 ID、FSMC WR/RD 波形、PA15 背光极性、XPT2046 四角原始值、横屏轴向和无 TE 条件下的撕裂仍待上板确认；编译通过不等同于实物通过。
 - 主要文件：`CMakeLists.txt`、`linker/STM32F407VETX_FLASH.ld`、`bsp/bsp_*f407ve*`、`bsp/bsp_lcd_fsmc.*`、`bsp/bsp_xpt2046_io.*`、`Device/ili9341/`、`Device/xpt2046/`、`Application/ui/`、`docs/hardware_mapping.md`。
 
+### 实机烧录验证（2026-07-20）
+
+- 用户决策：禁止下载/使用 pyOCD；该尝试已停止，最终只使用本机 `D:\\OPENOCD\\openocd-custom-20260615`。
+- 探针：板载 CMSIS-DAP FW 1.6.0，SWD 1 MHz，序列号 `2024-09-01`。
+- 芯片识别：CPUID=`0x410FC241`（Cortex-M4F），DBGMCU_IDCODE=`0x101F6413`（DEV_ID 0x413），Flash size=`0x0200`（512 KiB），与 STM32F407VET6 镜像边界一致。
+- 烧录：Release ELF SHA-256=`957D4D97ED0D01C32532925714353E6A790772F2EE748CBF68A7F3038995F6AF`；OpenOCD 完成擦写、`Verified OK` 和复位运行。
+- 运行验证：PC=`0x08000606`，解析到 `bsp_board_idle()` 的 `WFI`；CFSR/HFSR 均为 0。RCC 已切到 PLL；FSMC BCR1/BTR1/BWTR1 分别为 `0x5011/0x3C0F/0x0803`；PA15 为输出高电平，证明 UI 首帧路径已执行并打开背光。
+- 验证边界：寄存器证据不能证明 LCD 玻璃实际接收并显示了每次写入。用户报告的“没有刷新”仍需区分白/黑屏与首帧静止；后者当前因控制端口未接入、方位/仰角数据恒定而不会自行变化。
+
 ## 2026-07-05 速度闭环测试基线
 
 ### 控制链路
