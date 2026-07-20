@@ -1,0 +1,21 @@
+/**
+ * @file    crc16.h
+ * @brief   16位CRC校验(CRC-16 和 Modbus CRC)
+ * @origin  H 项目 Application/algorithm/crc16.h
+ * @note    100%可移植
+ */
+#ifndef CRC16_H
+#define CRC16_H
+
+#include <stdint.h>
+
+#define CRC_START_16    0xFFFF
+#define CRC_START_MODBUS 0xFFFF
+#define CRC_POLY_16     0xA001
+
+uint16_t crc_16(const uint8_t *input_str, uint16_t num_bytes);
+uint16_t crc_modbus(const uint8_t *input_str, uint16_t num_bytes);
+uint16_t update_crc_16(uint16_t crc, uint8_t c);
+void     init_crc16_tab(void);
+
+#endif /* CRC16_H */

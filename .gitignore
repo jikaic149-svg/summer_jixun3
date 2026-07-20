@@ -1,0 +1,35 @@
+# Keil / MDK build output
+MDK-ARM/spi_bmi088/
+MDK-ARM/*.lst
+MDK-ARM/*.uvguix.*
+*.crf
+*.d
+*.o
+*.axf
+*.hex
+*.bin
+*.elf
+*.su
+*.htm
+*.map
+*.lnp
+*.dep
+*.iex
+
+# Logs and temporary files
+log.txt
+1.txt
+serial_capture.csv
+*.log
+*.tmp
+*.bak
+build/
+backup_*/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS / editor noise
+Thumbs.db
+.DS_Store

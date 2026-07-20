@@ -1,0 +1,117 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "STM32F4: Select Action",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/stm32-action.ps1\" -Action \"${input:stm32Action}\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: Debug ST-Link OpenOCD",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/spi_bmi088.elf",
+      "servertype": "openocd",
+      "serverpath": "D:/OPENOCD/xpack-openocd-0.12.0-7/bin/openocd.exe",
+      "armToolchainPath": "D:/GCC/ARMGCC/10 2021.10/bin",
+      "device": "STM32F407IGHx",
+      "interface": "swd",
+      "runToEntryPoint": "main",
+      "preLaunchTask": "STM32: build",
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/stm32f4x.cfg"
+      ],
+      "openOCDLaunchCommands": [
+        "adapter speed 1000"
+      ]
+    },
+    {
+      "name": "STM32F4: Build",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/stm32-action.ps1\" -Action \"STM32: build\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: Clean",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/stm32-action.ps1\" -Action \"STM32: clean\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: Rebuild",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/stm32-action.ps1\" -Action \"STM32: rebuild\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: Build and Flash ST-Link",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/stm32-action.ps1\" -Action \"STM32: build and flash\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: Flash Current ELF ST-Link",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "D:/OPENOCD/xpack-openocd-0.12.0-7/bin/openocd.exe -f interface/stlink.cfg -f target/stm32f4x.cfg -c \"adapter speed 1000\" -c \"program build/spi_bmi088.elf verify reset exit\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "STM32F4: OpenOCD Server ST-Link",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "D:/OPENOCD/xpack-openocd-0.12.0-7/bin/openocd.exe -f interface/stlink.cfg -f target/stm32f4x.cfg -c \"adapter speed 1000\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Serial: Monitor VOFA",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/serial-monitor.ps1\" -Port \"${input:serialPort}\" -BaudRate 115200",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Serial: Capture VOFA 10s",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/serial-monitor.ps1\" -Port \"${input:serialPort}\" -BaudRate 115200 -DurationSec \"${input:serialDurationSec}\" -OutputPath \"${workspaceFolder}/serial_capture.csv\"",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "stm32Action",
+      "type": "pickString",
+      "description": "Select STM32 action",
+      "options": [
+        "STM32: build",
+        "STM32: clean",
+        "STM32: rebuild",
+        "STM32: flash",
+        "STM32: build and flash",
+        "STM32: openocd server"
+      ],
+      "default": "STM32: build"
+    },
+    {
+      "id": "serialPort",
+      "type": "promptString",
+      "description": "Serial port for VOFA output, for example COM3",
+      "default": "COM3"
+    },
+    {
+      "id": "serialDurationSec",
+      "type": "promptString",
+      "description": "Capture duration in seconds",
+      "default": "10"
+    }
+  ]
+}

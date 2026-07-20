@@ -1,0 +1,40 @@
+id: jixun3
+name: jixun3
+version: 1.0.2
+author: rlyoulo
+icon: app.png
+desc: fuck
+files:
+  - wav\__init__.py
+  - wav\ring_1.wav
+  - wav\ring_10.wav
+  - wav\ring_2.wav
+  - wav\ring_3.wav
+  - wav\ring_4.wav
+  - wav\ring_5.wav
+  - wav\ring_6.wav
+  - wav\ring_7.wav
+  - wav\ring_8.wav
+  - wav\ring_9.wav
+  - wav\wav.py
+  - 2026LaserTrack_yolo11n_cam2_npu.axmodel
+  - 2026LaserTrack_yolo11n_cam2_vnpu.axmodel
+  - 2026LaserTrack_yolo11n_cam2.mud
+  - main.py
+  - process.md
+  - send_udp_command.py
+  - target_recognition.py
+  - test_main_runtime.py
+  - test_ring_voice_reporter.py
+  - test_target_recognition.py
+  - test_udp_vofa_bridge.py
+  - test_vision_config.py
+  - test_vision_protocol.py
+  - test_vision_target_link.py
+  - test_vision_ui.py
+  - test_visual_calibration.py
+  - udp_vofa_bridge.py
+  - vision_config.py
+  - vision_target_link.py
+  - vision_ui.py
+  - visual_calibration.py
