@@ -1,0 +1,23 @@
+id: jisun33
+name: '12'
+version: 1.0.0
+author: cjk
+icon: app.png
+desc: 2k
+files:
+  - __init__.py
+  - app.png
+  - app.yaml
+  - box_face_app.py
+  - box_face_geometry.py
+  - gimbal_app.py
+  - gimbal_protocol.py
+  - gimbal_ui.py
+  - main.py
+  - tcp_server_test.py
+  - tof100_service.py
+  - uart_link.py
+  - vision_config.py
+  - vision_link.py
+  - vofa_protocol.py
+  - vofa_stream.py

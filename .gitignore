@@ -1,35 +1,22 @@
-# Keil / MDK build output
-MDK-ARM/spi_bmi088/
-MDK-ARM/*.lst
-MDK-ARM/*.uvguix.*
-*.crf
-*.d
-*.o
-*.axf
+# CMake and compiler output
+build/
+*.elf
 *.hex
 *.bin
-*.elf
-*.su
-*.htm
 *.map
-*.lnp
-*.dep
-*.iex
-
-# Logs and temporary files
-log.txt
-1.txt
-serial_capture.csv
-*.log
-*.tmp
-*.bak
-build/
-backup_*/
+*.su
 
 # Python cache
 __pycache__/
 *.py[cod]
 
+# Optional DAP trace export
+yaw_trace.bin
+yaw_trace.csv
+
 # OS / editor noise
 Thumbs.db
 .DS_Store
+
+# Local SSH credential helper
+tools/maix_ssh_askpass.exe

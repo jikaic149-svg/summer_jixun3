@@ -22,12 +22,22 @@ add_executable(${PROJECT_NAME}
     Src/lcd_demo_app.c
     Src/control_port.c
     bsp/bsp_board_f407ve.c
+    bsp/bsp_can1.c
+    bsp/bsp_cannon_relay.c
+    bsp/bsp_uart_bridge.c
     bsp/bsp_lcd_fsmc.c
     bsp/bsp_xpt2046_io.c
     Device/ili9341/ili9341.c
+    Device/esp8266/esp8266.c
+    Device/qd4310/qd4310.c
     Device/xpt2046/xpt2046.c
+    Application/control/cannon_aim_model.c
+    Application/control/pitch_hold_controller.c
+    Application/control/yaw_scan_controller.c
+    Application/protocol/gimbal_link_protocol.c
     Application/ui/app_command_bus.c
     Application/ui/target_ui.c
+    Application/ui/tft_theme_assets.c
     Application/ui/ui_font.c
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".elf")
@@ -37,7 +47,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     Src
     bsp
     Device/ili9341
+    Device/esp8266
+    Device/qd4310
     Device/xpt2046
+    Application/control
+    Application/protocol
     Application/ui
     Drivers/CMSIS/Include
     Drivers/CMSIS/Device/ST/STM32F4xx/Include

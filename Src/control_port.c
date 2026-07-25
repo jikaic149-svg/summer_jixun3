@@ -9,6 +9,6 @@ control_submit_result_t control_port_submit(const app_command_t *command)
         return CONTROL_SUBMIT_BUSY;
     }
 
-    /* Replace this weak port when the new control layer is implemented. */
-    return CONTROL_SUBMIT_UNAVAILABLE;
+    /* UI-only demo: acknowledge commands without driving any hardware. */
+    return CONTROL_SUBMIT_ACCEPTED;
 }

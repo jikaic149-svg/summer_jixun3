@@ -8,16 +8,25 @@
 
 typedef enum {
     APP_COMMAND_SET_DISTANCE = 0,
-    APP_COMMAND_FIRE_DISTANCE,
+    APP_COMMAND_FIRE_DISTANCE, /* Legacy wire name: distance aim task. */
     APP_COMMAND_FIXED_TARGET,
     APP_COMMAND_AUTO_SEARCH,
     APP_COMMAND_SWEEP,
-    APP_COMMAND_STOP
+    APP_COMMAND_START,
+    APP_COMMAND_STOP,
+    APP_COMMAND_DISABLE,
+    APP_COMMAND_SET_YAW_TARGET,
+    APP_COMMAND_SET_PITCH_TARGET,
+    APP_COMMAND_FIRE_PULSE,
+    APP_COMMAND_FIRE_ABORT,
+    APP_COMMAND_CHARGE_START,
+    APP_COMMAND_CHARGE_ABORT
 } app_command_type_t;
 
 typedef struct {
     app_command_type_t type;
     uint16_t distance_cm;
+    int16_t angle_degrees;
     uint32_t timestamp_ms;
 } app_command_t;
 
